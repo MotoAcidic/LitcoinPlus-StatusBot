@@ -1,0 +1,17 @@
+{
+  "name": "LitecoinPlus-Bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tfinch",
+  "license": "MIT",
+  "dependencies": {
+    "coinpoolservices-rpc": "^1.0.5",
+    "pm2": "^2.10.2",
+    "discord.js": "^11.4.2",
+    "request-promise": "^4.2.4"
+  }
+}
