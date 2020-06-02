@@ -15,9 +15,8 @@ const client = new Client();
 global.globalClient = client;
 
 client.on('ready', () => {
-    log.log_write_console(config.messages.botStarted + ` ${client.user.tag}!`);
-    client.user.setPresence({ status: 'online', game: { name: config.bot.gameMessage } }); 
-},
+    console.log('The started and is online!');
+}),
 
 client.on('message', msg => {
     var userID = msg.author.id;
@@ -25,7 +24,7 @@ client.on('message', msg => {
     var messageFull = msg;
     var messageType = msg.channel.type;
     var messageContent = msg.content;
-    var channelID = msg.channel.id;
+    //var channelID = msg.channel.id;
     var userBot = msg.author.bot;
 
 
@@ -37,32 +36,14 @@ client.on('message', msg => {
     if (userBot)
         return;
 
-    // If its not a dm message check if its a valid channel for commands
-    if (!check.check_respond_channel(channelID) && messageType !== 'dm')
-        return;
-
     // If message has command prefix
     if (messageContent.startsWith(config.bot.commandPrefix)) {
         var recievedCommand = messageContent.toLowerCase().split(/ +/);
 
     // Process command
-    command.fire_command(messageFull, userID, userName, messageType, userRole, recievedCommand[0].substr(1), recievedCommand[1], recievedCommand[2], recievedCommand[3]);
+    command.fire_command(messageFull, userID, userName, messageType, recievedCommand[0].substr(1), recievedCommand[1], recievedCommand[2], recievedCommand[3]);
     }
-},
-
-/*bot.on('message', message => {
-
-    let args = message.content.substring(config.bot.commandPrefix.length).split(" ");
-    switch (args[0]) {
-        case 'tr':
-            message.channel.sendMessage('works');
-            break;
-        case 'clear':
-            if (!args[1]) return message.reply('Error please enter how many message to delete')
-            message.channel.bulkDelete(args[1]);
-            break;
-    }
-})*/
+});
 
 // Start the bot
 client.login(config.bot.botToken);

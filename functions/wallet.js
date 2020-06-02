@@ -86,29 +86,6 @@ module.exports = {
     },
 
     /* ------------------------------------------------------------------------------ */
-    // Get difficulty info BTC 0.17 RPC
-    /* ------------------------------------------------------------------------------ */
-
-    wallet_difficulty_info: function () {
-        return new Promise((resolve, reject) => {
-            coinClient.getDifficulty(function (error, result) {
-                if (error) {
-                    var errorMessage = "wallet_difficulty_info: Wallet query problem. (getdifficulty)";
-                    if (config.bot.errorLogging) {
-                        log.log_write_file(errorMessage);
-                        log.log_write_file(error);
-                    }
-                    log.log_write_console(errorMessage);
-                    log.log_write_console(error);
-                    resolve('error');
-                } else {
-                    resolve(result);
-                }
-            });
-        });
-    },
-
-    /* ------------------------------------------------------------------------------ */
     // Get Rules List
     /* ------------------------------------------------------------------------------ */
 
