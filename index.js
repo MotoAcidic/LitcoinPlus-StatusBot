@@ -1,4 +1,3 @@
-//var config = require('./config.js');
 try {
     var config = process.cwd() + '/config.js';
     config = require(config);
@@ -9,33 +8,25 @@ try {
 const discord = require('discord.js');
 const client = new discord.Client();
 
-
-//var command = require("./functions/command.js");
 var wallet = require("./functions/wallet.js");
-//var cron = require("./functions/cron.js");
-const isValidCommand = (message, cmdName) => message.content.toLowerCase().startsWith(config.bot.commandPrefix + cmdName)
-
 
 client.on('ready', () => {
-    console.log('The started and is online!');
+    console.log('The bot has come online!');
 });
 
 
-client.on('message', async function (message) {
-    var walletInfo = await wallet.wallet_get_info();
-    var currentBlock = walletInfo.blocks;
-    var rule1 = 1;
-    var testruleInfo = await wallet.wallet_testrule_info(currentBlock, rule1);
-    var ruleNumber1 = testruleInfo.ruleType;
-    var statusChannel = client.channels.find(channel => channel.id === config.bot.statusChannel);
+setInterval( async function () {
+        var walletInfo = await wallet.wallet_get_info();
+        var currentBlock = walletInfo.blocks;
+        var rule1 = 1;
+        var testruleInfo = await wallet.wallet_testrule_info(currentBlock, rule1);
+        var ruleNumber1 = testruleInfo.ruleType;
+        var statusChannel = client.channels.find(channel => channel.id === config.bot.statusChannel);
 
-    if (message.author.bot) return;
-
-    if (isValidCommand(message, 'tr')) {
         if (ruleNumber1 === undefined) {
-            message.channel.send({
+            statusChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 0x2ecc71,
                     title: "POW is currenty turned ON!",
                     fields: [{
                         name: "Current Block",
@@ -47,13 +38,13 @@ client.on('message', async function (message) {
                         text: "Current Live Status"
                     }
                 }
-            });
-            message.delete(10000);
+                
+            }).catch((e) => { console.log(e); });
 
         } else {
-            message.channel.send({
+            statusChannel.send({
                 embed: {
-                    color: 3447003,
+                    color: 0xe74c3c,
                     title: "POW is currenty turned OFF!",
                     fields: [{
                         name: "Current Block",
@@ -66,16 +57,18 @@ client.on('message', async function (message) {
                     }
                 }
             });
-            message.delete(10000);
         }
-        return;
-    }    
+    return;
+    
+}, config.postTimes.statusLcpPostTime * 1000);
+
+client.on('message', (message) => {
+    if (message.channel.id === config.bot.statusChannel) {
+
+        message.delete(config.postTimes.statusLcpDeleteTime * 1000);
+
+    }
 });
 
 // Start the bot
 client.login(config.bot.botToken);
-
-// Start cronjobs
-
-//if (config.wallet.ruleStatus1) // Post LCP Rule 1 Status
-   // cron.cron_lcp_chain_status();

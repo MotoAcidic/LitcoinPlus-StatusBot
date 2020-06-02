@@ -1,12 +1,12 @@
 {
-  "name": "LitecoinPlus-Bot",
+  "name": "LitecoinPlus-StatusBot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Tfinch",
+  "author": "Tfinch (MotoAcidic)",
   "license": "MIT",
   "dependencies": {
     "coinpoolservices-rpc": "^1.0.5",
