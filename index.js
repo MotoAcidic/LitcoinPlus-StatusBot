@@ -6,43 +6,70 @@ try {
     console.error('ERROR -> Unable to load config file.');
     process.exit(1);
 }
+const discord = require('discord.js');
+const client = new discord.Client();
 
-var command = require("./functions/command.js");
-var cron = require("./functions/cron.js");
 
-const { Client } = require('discord.js');
-const client = new Client();
-global.globalClient = client;
+//var command = require("./functions/command.js");
+var wallet = require("./functions/wallet.js");
+//var cron = require("./functions/cron.js");
+const isValidCommand = (message, cmdName) => message.content.toLowerCase().startsWith(config.bot.commandPrefix + cmdName)
+
 
 client.on('ready', () => {
     console.log('The started and is online!');
-}),
-
-client.on('message', msg => {
-    var userID = msg.author.id;
-    var userName = msg.author;
-    var messageFull = msg;
-    var messageType = msg.channel.type;
-    var messageContent = msg.content;
-    //var channelID = msg.channel.id;
-    var userBot = msg.author.bot;
+});
 
 
-    // Only check messages if its not the bot itself or another bot
-    if (userID == config.bot.botID)
+client.on('message', async function (message) {
+    var walletInfo = await wallet.wallet_get_info();
+    var currentBlock = walletInfo.blocks;
+    var rule1 = 1;
+    var testruleInfo = await wallet.wallet_testrule_info(currentBlock, rule1);
+    var ruleNumber1 = testruleInfo.ruleType;
+    var statusChannel = client.channels.find(channel => channel.id === config.bot.statusChannel);
+
+    if (message.author.bot) return;
+
+    if (isValidCommand(message, 'tr')) {
+        if (ruleNumber1 === undefined) {
+            message.channel.send({
+                embed: {
+                    color: 3447003,
+                    title: "POW is currenty turned ON!",
+                    fields: [{
+                        name: "Current Block",
+                        value: currentBlock
+                    }
+                    ],
+                    timestamp: new Date(),
+                    footer: {
+                        text: "Current Live Status"
+                    }
+                }
+            });
+            message.delete(10000);
+
+        } else {
+            message.channel.send({
+                embed: {
+                    color: 3447003,
+                    title: "POW is currenty turned OFF!",
+                    fields: [{
+                        name: "Current Block",
+                        value: currentBlock
+                    }
+                    ],
+                    timestamp: new Date(),
+                    footer: {
+                        text: "Current Live Status"
+                    }
+                }
+            });
+            message.delete(10000);
+        }
         return;
-
-    // Only check if its not other bot
-    if (userBot)
-        return;
-
-    // If message has command prefix
-    if (messageContent.startsWith(config.bot.commandPrefix)) {
-        var recievedCommand = messageContent.toLowerCase().split(/ +/);
-
-    // Process command
-    command.fire_command(messageFull, userID, userName, messageType, recievedCommand[0].substr(1), recievedCommand[1], recievedCommand[2], recievedCommand[3]);
-    }
+    }    
 });
 
 // Start the bot
@@ -50,5 +77,5 @@ client.login(config.bot.botToken);
 
 // Start cronjobs
 
-if (config.wallet.cronLcpStatus) // Post LCP Chain Status
-    cron.cron_lcp_chain_status();
+//if (config.wallet.ruleStatus1) // Post LCP Rule 1 Status
+   // cron.cron_lcp_chain_status();
