@@ -1,1 +1,0 @@
-LitecoinPlus-StatusBot
